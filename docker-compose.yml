@@ -31,8 +31,8 @@ services:
       - ./logstash/pipeline:/usr/share/logstash/pipeline:ro,z
     ports:
       - "5044:5044"
-      - "5000:5000/tcp"
-      - "5000:5000/udp"
+      - "5001:5001/tcp"
+      - "5001:5001/udp"
       - "9600:9600"
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
@@ -54,6 +54,21 @@ services:
       - elk
     depends_on:
       - elasticsearch
+  
+  apm-server:
+    build:
+      context: apm-server/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - ./apm/config/apm-server.yml:/usr/share/apm-server/config/apm-server.yml:ro,z
+    ports:
+      - "8200:8200"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+  
 
 networks:
   elk:
